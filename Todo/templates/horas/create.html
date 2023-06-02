@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="update">
+    {% if error %}
+    <div class="flash"> {{ error }} </div>
+    {% endif %}
+    <form method="post" class="action1">
+        <label for="nombre">Nombre</label>   
+        <input name="nombre" required>
+        <label for="horas">Horas iniciales</label>   
+        <input name="horas" required>
+        <input type="submit" value="Guardar"/>    
+    </form>
+</div>
+{% endblock  %}

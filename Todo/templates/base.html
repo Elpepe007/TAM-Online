@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>{% block title %}{% endblock %} - Alumnos/horas</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" type="text/css" href='{{ url_for("static",filename="/base/css/reset.min.css") }}' />
+    <link rel="stylesheet" type="text/css" href='{{ url_for("static",filename="/base/css/style.css") }}' />
+    <link rel="stylesheet" type="text/css" href='{{ url_for("static",filename="/base/css/header.css") }}' />
+  </head>
+  <body>
+    <!-- Header Start -->
+    <header class="site-header">
+      <div class="wrapper site-header__wrapper">
+        <div class="site-header__start">
+          {% if g.user %}
+            <a class="brand"> Usuario: {{ g.user['username']}} / jefe de taller: {{ g.nombre_taller['nombre'] }} </a> 
+          {% endif %}
+        </div>
+        <div class="site-header__middle">
+
+        </div>
+        <div class="site-header__end">
+          {% if g.user %}
+            <a href="{{ url_for('auth.logout') }}">Cerrar sesion</a>    
+          {% endif %}          
+        </div>
+      </div>
+    </header>
+    <!-- Header End -->
+
+  <div class="container">
+  {% block content %}{% endblock %}
+  </div>
+
+  </body>
+</html>

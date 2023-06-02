@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<script>
+    window.onbeforeunload = function() {
+        localStorage.setItem('scrollPosition', window.pageYOffset);
+    }
+    window.onload = function() {
+        var scrollPosition = localStorage.getItem('scrollPosition');
+        if (scrollPosition) {
+            window.scrollTo(0, scrollPosition);
+            localStorage.removeItem('scrollPosition');
+        }
+    }
+</script>
+
+<script> 
+function search() {
+    var searchText = document.getElementById("alumnos").value.toLowerCase();
+    var items = document.getElementsByClassName("alumnos");
+    for (var i = 0; i < items.length; i++) {
+      var itemText = items[i].textContent.toLowerCase();
+      if (itemText.includes(searchText)) {
+        items[i].style.display = "block";
+      } else {
+        items[i].style.display = "none";
+      }
+    }
+  }
+</script>
+<div class="barra">
+<input type="text" id="alumnos" placeholder="Buscar alumno...">
+<button type="button" onclick="search()">Buscar</button>
+
+</div>
+    {% if g.user %}
+        <a class="action1" href="{{ url_for('horas.create') }}">Nuevo alumno</a>
+        <a class="action1" href="{{ url_for('horas.csv_export') }}"  method="post">Exportar a exel</a>
+        <a class="action2" href="{{ url_for('horas.reiniciar_semana') }}"  method="post">Reiniciar semana</a>
+    {% endif %}
+
+<div class="global_list">  
+<ul>
+    {% for alumno in alumnos %}
+        <li class="alumnos">
+            <div>
+                <h1 class="names"> 
+                    {{alumno['nombre']}}
+                </h1>
+                <div class="about"> 
+                    Numero de horas: {{ alumno['horas'] }} 
+                    <a class="action" href="{{ url_for('horas.update', nombre=alumno['nombre']) }}">Editar</a>
+                    <br>
+                    <a class="action" href="{{ url_for('horas.update_by_button', nombre=alumno['nombre'], number=1) }}">+1</a>
+                    <a class="action" href="{{ url_for('horas.update_by_button', nombre=alumno['nombre'], number=2) }}">+2</a>
+                    <a class="action" href="{{ url_for('horas.update_by_button', nombre=alumno['nombre'], number=3) }}">+3</a>
+                    <a class="action" href="{{ url_for('horas.update_by_button', nombre=alumno['nombre'], number=4) }}">+4</a>
+                    <br>
+                </div>
+            </div>
+        </li>
+        {% if not loop.last %}
+
+        {% endif %} 
+    {% endfor %}
+</ul>
+</div>  
+{% endblock  %}
