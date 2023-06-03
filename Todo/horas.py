@@ -55,7 +55,7 @@ def create():
     error = None
     if request.method == 'POST':
         nombre = request.form['nombre']
-        horas = None
+        horas = 0
         error = None        
         if not nombre:
             error = 'El nombre es requerido'
