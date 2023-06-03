@@ -156,6 +156,7 @@ def csv_export():
         pass
 
     database_to_csv()
+    
 
     return send_file(r'.\Todo\csv_outputs\exported_data.xlsx', as_attachment=True, download_name='data.xlsx')
 
