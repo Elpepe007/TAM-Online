@@ -154,10 +154,10 @@ def csv_export():
         os.remove(r'.\Todo\csv_outputs\exported_data.xlsx')
     except:
         pass
-#r
+
     database_to_csv()
 
-    return send_file(r'.\Todo\csv_outputs\exported_data.xlsx', as_attachment=True, download_name='data.xlsx')
+    return send_file(r'csv_outputs\exported_data.xlsx', as_attachment=True, download_name='data.xlsx')
 
 @bp.route('/reiniciar_semana', methods=['GET','POST'])
 @login_required
