@@ -2,4 +2,3 @@ venv/
 .env
 *.pyc
 __pyvache__/
-instance/
