@@ -144,20 +144,20 @@ def database_to_csv():
     c.execute('SELECT nombre, horas FROM alumnos WHERE taller_id = %s;',(g.user_taller_id,))
     database_table = c.fetchall()
     df = pd.DataFrame(database_table)
-    df.to_excel(r'Todo\csv_outputs\exported_data.xlsx', index = False)
+    df.to_excel(r'.\Todo\csv_outputs\exported_data.xlsx', index = False)
 
 
 @bp.route('/csv_export', methods=['GET','POST'])
 @login_required
 def csv_export():
     try:
-        os.remove(r'Todo\csv_outputs\exported_data.xlsx')
+        os.remove(r'.\Todo\csv_outputs\exported_data.xlsx')
     except:
         pass
 
     database_to_csv()
 
-    return send_file(r'csv_outputs\exported_data.xlsx', as_attachment=True, download_name='data.xlsx')
+    return send_file(r'.\Todo\csv_outputs\exported_data.xlsx', as_attachment=True, download_name='data.xlsx')
 
 @bp.route('/reiniciar_semana', methods=['GET','POST'])
 @login_required
