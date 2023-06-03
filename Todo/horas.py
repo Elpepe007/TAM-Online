@@ -157,7 +157,7 @@ def csv_export():
 
     database_to_csv()
 
-    return send_file(r'.\Todo\csv_outputs\exported_data.xlsx', as_attachment=True, download_name='data.xlsx')
+    return send_file(r'csv_outputs\exported_data.xlsx', index = False, as_attachment=True, download_name='data.xlsx')
 
 @bp.route('/reiniciar_semana', methods=['GET','POST'])
 @login_required
