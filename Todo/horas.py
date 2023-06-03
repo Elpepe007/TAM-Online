@@ -57,15 +57,8 @@ def create():
         nombre = request.form['nombre']
         horas = None
         error = None        
-
-        try:
-            horas = int(request.form['horas'])
-        except:
-            error = 'Solo se aceptan numeros'
-
         if not nombre:
             error = 'El nombre es requerido'
-
         if error is not None:
             flash(error)
         else:
@@ -91,7 +84,6 @@ def update(nombre):
     alumno = get_alumno(nombre)
     error = None
     if request.method == 'POST':
-#        alumno = get_alumno(nombre)
         numero_de_horas = request.form['horas']
         error = None
         if not numero_de_horas:
