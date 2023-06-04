@@ -1,6 +1,6 @@
 instructions = [
 """
-  CREATE TABLE user (
+  CREATE TABLE IF NOT EXISTS user (
       id INT AUTO_INCREMENT PRIMARY KEY,
       username VARCHAR(255) NOT NULL,
       password VARCHAR(255) NOT NULL,
@@ -8,13 +8,13 @@ instructions = [
 );
 """,
 """
-  CREATE TABLE talleres (
+  CREATE TABLE IF NOT EXISTS talleres (
       id INT AUTO_INCREMENT PRIMARY KEY,
       nombre VARCHAR(255) NOT NULL
   );
 """,
 """
-  CREATE TABLE profesores (
+  CREATE TABLE IF NOT EXISTS profesores (
       id INT AUTO_INCREMENT PRIMARY KEY,
       user_id INT,
       taller_id INT,
@@ -23,7 +23,7 @@ instructions = [
 );
 """,
 """
-  CREATE TABLE alumnos (
+  CREATE TABLE IF NOT EXISTS alumnos (
       id INT AUTO_INCREMENT PRIMARY KEY,
       taller_id INT,
       nombre VARCHAR(255) NOT NULL,
