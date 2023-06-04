@@ -112,7 +112,7 @@ def admin_login_required(view):
 def profesor_login_required(view):
     @functools.wraps(view)
     def wrapped_view(**kwargs):
-        if g.user_type != 'profesor' or g.nombre_taller != 'admin_online':
+        if g.user_type != 'profesor' or g.nombre_taller == 'admin_online':
             session.clear()
             return redirect(url_for('auth.login'))
         return view(**kwargs)
