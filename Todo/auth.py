@@ -103,7 +103,7 @@ def login_required(view):
 def admin_login_required(view):
     @functools.wraps(view)
     def wrapped_view(**kwargs):
-        if g.nombre_taller != 'admin_online':
+        if g.user_taller_id != 1:
             session.clear()
             return redirect(url_for('auth.login'))
         return view(**kwargs)
