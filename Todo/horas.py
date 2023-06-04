@@ -1,6 +1,6 @@
 from flask import Blueprint, flash, g, redirect, render_template, request, url_for
 from werkzeug.exceptions import abort
-from Todo.auth import login_required, admin_login_required
+from Todo.auth import login_required, admin_login_required, profesor_login_required
 from Todo.db import get_db
 from flask import send_file
 import pandas as pd
@@ -8,8 +8,8 @@ import os
 
 bp = Blueprint('horas', __name__)
 
-@login_required
 @bp.route('/estudiantes_index')
+@login_required
 def estudiantes_index():
     db, c = get_db()
     c.execute('SELECT * FROM alumnos ORDER BY nombre ASC;') 
@@ -20,7 +20,7 @@ def estudiantes_index():
 @bp.route('/profesor_register_index',methods=['GET','POST'])
 def profesor_register_index():
     db, c = get_db()
-    c.execute('SELECT id, username FROM user WHERE NOT EXISTS (SELECT 1 FROM profesores WHERE profesores.user_id = user.id )') 
+    c.execute("SELECT id, username FROM user WHERE NOT EXISTS (SELECT 1 FROM profesores WHERE profesores.user_id = user.id ) AND user.user_type = 'profesor' ") 
     users = c.fetchall()
     return render_template('auth/user_admin/user_index.html', users=users)
 
@@ -47,7 +47,7 @@ def profesor_delete(ID_DEL_USER):
     return redirect(url_for('horas.profesor_register_index'))
 
 @bp.route('/')
-@login_required
+@profesor_login_required
 def index():
     db, c = get_db()
     c.execute('SELECT * FROM alumnos WHERE taller_id = %s ORDER BY nombre ASC;',(g.user_taller_id,)) 
@@ -58,7 +58,7 @@ def index():
     return render_template('horas/index.html', alumnos=alumnos, taller=taller)
 
 @bp.route('/create', methods=['GET','POST'])
-@login_required
+@profesor_login_required
 def create():
     error = None
     if request.method == 'POST':
@@ -87,7 +87,7 @@ def get_alumno(nombre):
     return alumno
 
 @bp.route('/<nombre>/update', methods=['GET','POST'])
-@login_required
+@profesor_login_required
 def update(nombre):
     alumno = get_alumno(nombre)
     error = None
@@ -112,7 +112,7 @@ def update(nombre):
 
 
 @bp.route('/<nombre>,<int:number>/update_by_button', methods=['GET','POST'])
-@login_required
+@profesor_login_required
 def update_by_button(nombre,number):
     alumno = get_alumno(nombre)
     error = None
@@ -132,7 +132,7 @@ def update_by_button(nombre,number):
 
 
 @bp.route('/<string:nombre>/delete', methods=['POST'])
-@login_required
+@profesor_login_required
 def delete(nombre):
     db, c = get_db()
     c.execute('delete from alumnos where nombre = %s and taller_id = %s',(nombre, g.user_taller_id))
@@ -148,7 +148,7 @@ def database_to_csv():
 
 
 @bp.route('/csv_export', methods=['GET','POST'])
-@login_required
+@profesor_login_required
 def csv_export():
     try:
         os.remove(r'./Todo/csv_outputs/exported_data.xlsx')
@@ -160,7 +160,7 @@ def csv_export():
     return send_file(r'csv_outputs/exported_data.xlsx', as_attachment=True, download_name='data.xlsx')
 
 @bp.route('/reiniciar_semana', methods=['GET','POST'])
-@login_required
+@profesor_login_required
 def reiniciar_semana():
     db, c = get_db()
     c.execute('SELECT nombre FROM alumnos WHERE taller_id = %s;',(g.user_taller_id,))
