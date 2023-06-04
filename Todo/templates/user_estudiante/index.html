@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+  <head>
+	<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+    <meta charset="UTF-8" />
+    <title>{% block title %}{% endblock %} - Admin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" type="text/css" href='{{ url_for("static",filename="/base/css/reset.min.css") }}' />
+    <link rel="stylesheet" type="text/css" href='{{ url_for("static",filename="/base/css/style.css") }}' />
+    <link rel="stylesheet" type="text/css" href='{{ url_for("static",filename="/base/css/header.css") }}' />
+  </head>
+    <body>
+        <!-- Header Start -->
+        <header class="site-header">
+            <div class="wrapper site-header__wrapper">
+                <div class="site-header__start">
+                {% if g.user %}
+                    <a class="brand"> {{ g.user['username']}}</a> 
+                {% endif %}
+                </div>
+                <div class="site-header__middle">
+
+                </div>
+                <div class="site-header__end">
+                {% if g.user %}
+                    <a href="{{ url_for('auth.logout') }}">Cerrar sesion</a>    
+                {% endif %}          
+                </div>
+            </div>
+        </header>
+        <!-- Header End -->
+
+        <div class="container">
+            <script>
+                window.onbeforeunload = function() {
+                    localStorage.setItem('scrollPosition', window.pageYOffset);
+                }
+                window.onload = function() {
+                    var scrollPosition = localStorage.getItem('scrollPosition');
+                    if (scrollPosition) {
+                        window.scrollTo(0, scrollPosition);
+                        localStorage.removeItem('scrollPosition');
+                    }
+                }
+            </script>
+
+            <script> 
+            function search() {
+                var searchText = document.getElementById("alumnos").value.toLowerCase();
+                var items = document.getElementsByClassName("alumnos");
+                for (var i = 0; i < items.length; i++) {
+                var itemText = items[i].textContent.toLowerCase();
+                if (itemText.includes(searchText)) {
+                    items[i].style.display = "block";
+                } else {
+                    items[i].style.display = "none";
+                }
+                }
+            }
+            </script>
+            <div class="barra">
+            <input type="text" id="alumnos" placeholder="Buscar alumno...">
+            <button type="button" onclick="search()">Buscar</button>
+
+            <div class="global_list">  
+            <ul>
+                {% for alumno in alumnos %}
+                    <li class="alumnos">
+                        <div>
+                            <h1 class="names"> 
+                                {{alumno['nombre']}}
+                            </h1>
+                            <div class="about"> 
+                                horas semanales: {{ alumno['horas'] }} 
+                            </div>
+                        </div>
+                    </li>
+                    {% if not loop.last %}
+                    {% endif %} 
+                {% endfor %}
+            </ul>
+            </div>  
+        </div>
+    </body>
+</html>

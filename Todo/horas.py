@@ -8,6 +8,14 @@ import os
 
 bp = Blueprint('horas', __name__)
 
+@login_required
+@bp.route('/estudiantes_index')
+def estudiantes_index():
+    db, c = get_db()
+    c.execute('SELECT * FROM alumnos ORDER BY nombre ASC;') 
+    alumnos = c.fetchall()     
+    return render_template('user_estudiante/index.html', alumnos=alumnos)
+
 @admin_login_required
 @bp.route('/profesor_register_index',methods=['GET','POST'])
 def profesor_register_index():

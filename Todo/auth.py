@@ -11,6 +11,7 @@ def register():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
+        Type = int(request.form['user_type'])
         db, c = get_db()
         error = None
         c.execute("SELECT id FROM user WHERE username = %s", (username,))
@@ -18,11 +19,18 @@ def register():
             error = 'Username es requerido'
         if not password:
             error = 'Password es requerido'
+        if Type == 0 or Type > 2:
+            error = 'El tipo de usuario es requerido'        
         elif c.fetchone() is not None:
             print(c.fetchone())
             error = 'Usuario {} ya se registro antes'.format(username)
         if error is None:
-            c.execute("INSERT INTO user (username, password) VALUES (%s, %s)",(username, generate_password_hash(password)))
+            user_type = None
+            if Type == 1:
+                user_type = 'profesor'
+            if Type == 2:
+                user_type = 'estudiante'
+            c.execute("INSERT INTO user (username, password, user_type) VALUES (%s, %s, %s)",(username, generate_password_hash(password), user_type))
             db.commit()
             return redirect(url_for('auth.login'))
         flash(error)
@@ -47,14 +55,18 @@ def login():
             error = 'Username or Password incorrect'
         if error is None:
             try:
-                session['user_taller_id'] = user_taller_id['taller_id']        
+                if user['user_type'] == 'profesor': 
+                    session['user_taller_id'] = user_taller_id['taller_id']        
             except:
                 abort(Response('El Profesor todavia no tiene asignado el taller'))
             session.clear()
             session['user_id'] = user['id']
-            session['user_taller_id'] = user_taller_id['taller_id']
+            if user['user_type'] == 'profesor': 
+                session['user_taller_id'] = user_taller_id['taller_id']
             if user['username'] == 'admin':
                 return redirect(url_for('horas.profesor_register_index'))
+            if user['user_type'] == 'estudiante':
+                return redirect(url_for('horas.estudiantes_index'))
             else:            
                 return redirect(url_for('horas.index'))
         flash(error)
