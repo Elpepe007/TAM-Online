@@ -16,16 +16,16 @@ def estudiantes_index():
     alumnos = c.fetchall()     
     return render_template('user_estudiante/index.html', alumnos=alumnos)
 
-@admin_login_required
 @bp.route('/profesor_register_index',methods=['GET','POST'])
+@admin_login_required
 def profesor_register_index():
     db, c = get_db()
     c.execute("SELECT id, username FROM user WHERE NOT EXISTS (SELECT 1 FROM profesores WHERE profesores.user_id = user.id ) AND user.user_type = 'profesor' ") 
     users = c.fetchall()
     return render_template('auth/user_admin/user_index.html', users=users)
 
-@admin_login_required
 @bp.route('/<ID_DEL_USER>/<NOMBRE_DEL_USER>/profesor_register',methods=['GET','POST'])
+@admin_login_required
 def profesor_register(ID_DEL_USER,NOMBRE_DEL_USER):
     db, c = get_db()    
     c.execute('SELECT id, nombre FROM talleres;')
@@ -38,8 +38,8 @@ def profesor_register(ID_DEL_USER,NOMBRE_DEL_USER):
         return redirect(url_for('horas.profesor_register_index'))
     return render_template('auth/user_admin/user_register.html', talleres=talleres, ID_DEL_USER=ID_DEL_USER, NOMBRE_DEL_USER=NOMBRE_DEL_USER)
 
-@admin_login_required
 @bp.route('/<int:ID_DEL_USER>/profesor_delete',methods=['GET','POST'])
+@admin_login_required
 def profesor_delete(ID_DEL_USER):
     db, c = get_db()
     c.execute('delete from user where id = %s',(ID_DEL_USER,))
@@ -77,7 +77,6 @@ def create():
 
     return render_template('horas/create.html', error=error)
 
-
 def get_alumno(nombre):
     db, c = get_db()
     c.execute('SELECT * FROM alumnos WHERE nombre = %s;', (nombre,))
@@ -110,7 +109,6 @@ def update(nombre):
             return redirect(url_for('horas.index'))
     return render_template('horas/update.html', alumno=alumno, error=error)
 
-
 @bp.route('/<nombre>,<int:number>/update_by_button', methods=['GET','POST'])
 @profesor_login_required
 def update_by_button(nombre,number):
@@ -129,8 +127,6 @@ def update_by_button(nombre,number):
         db.commit()
         return redirect(url_for('horas.index'))
 
-
-
 @bp.route('/<string:nombre>/delete', methods=['POST'])
 @profesor_login_required
 def delete(nombre):
@@ -145,7 +141,6 @@ def database_to_csv():
     database_table = c.fetchall()
     df = pd.DataFrame(database_table)
     df.to_excel(r'./Todo/csv_outputs/exported_data.xlsx', index = False)
-
 
 @bp.route('/csv_export', methods=['GET','POST'])
 @profesor_login_required

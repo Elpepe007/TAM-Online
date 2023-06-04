@@ -61,6 +61,7 @@ def login():
                 abort(Response('El Profesor todavia no tiene asignado el taller'))
             session.clear()
             session['user_id'] = user['id']
+            session['user_type'] = user['user_type']
             if user['user_type'] == 'profesor': 
                 session['user_taller_id'] = user_taller_id['taller_id']
             if user['username'] == 'admin':
@@ -76,10 +77,12 @@ def login():
 def load_logged_in_user():
     user_id = session.get('user_id')
     user_taller_id = session.get('user_taller_id')
+    user_type = session.get('user_type')
     if user_id is None:
         g.user = None
         g.user_taller_id = None
         g.nombre_taller = None
+        g.user_type = None
     else:
         db, c = get_db()
         c.execute('select * from user where id = %s', (user_id,))
@@ -87,6 +90,7 @@ def load_logged_in_user():
         g.user_taller_id = user_taller_id
         c.execute('SELECT nombre FROM talleres WHERE id = %s',(g.user_taller_id,))
         g.nombre_taller = c.fetchone()
+        g.user_type = user_type
         
 def login_required(view):
     @functools.wraps(view)
@@ -99,7 +103,7 @@ def login_required(view):
 def admin_login_required(view):
     @functools.wraps(view)
     def wrapped_view(**kwargs):
-        if g.user['username'] != 'admin':
+        if g.user_type != 'admin':
             return redirect(url_for('auth.login'))
         return view(**kwargs)
     return wrapped_view 
@@ -107,7 +111,7 @@ def admin_login_required(view):
 def profesor_login_required(view):
     @functools.wraps(view)
     def wrapped_view(**kwargs):
-        if g.user['user_type'] != 'profesor':
+        if g.user_type != 'profesor':
             session.clear()
             return redirect(url_for('auth.login'))
         return view(**kwargs)
@@ -117,5 +121,3 @@ def profesor_login_required(view):
 def logout():
     session.clear()
     return redirect(url_for('auth.login'))
-
-
