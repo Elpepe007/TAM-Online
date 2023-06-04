@@ -1,10 +1,4 @@
 instructions = [
-    'SET FOREIGN_KEY_CHECKS=0;',
-    'DROP TABLE IF EXISTS profesores;',
-    'DROP TABLE IF EXISTS user;',
-    'DROP TABLE IF EXISTS talleres;',
-    'DROP TABLE IF EXISTS alumnos;',         
-    'SET FOREIGN_KEY_CHECKS=1;',
 """
   CREATE TABLE user (
       id INT AUTO_INCREMENT PRIMARY KEY,
