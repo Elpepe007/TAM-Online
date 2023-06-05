@@ -27,7 +27,7 @@ instructions = [
       id INT AUTO_INCREMENT PRIMARY KEY,
       taller_id INT,
       nombre VARCHAR(255) NOT NULL,
-      horas DECIMAL(5, 2),
+      horas TIME,
       FOREIGN KEY (taller_id) REFERENCES talleres(id)
   );
 """
