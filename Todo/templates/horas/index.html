@@ -49,7 +49,7 @@ function search() {
                     {{alumno['nombre']}}
                 </h1>
                 <div class="about"> 
-                    Numero de horas: {{ alumno['horas'] }} 
+                    Horas semanales: {{ alumno['horas'] }} 
                     <a class="action" href="{{ url_for('horas.update', nombre=alumno['nombre']) }}">Editar</a>
                     <br>
                     <a class="action" href="{{ url_for('horas.update_by_button', nombre=alumno['nombre'], number=1) }}">+1</a>
