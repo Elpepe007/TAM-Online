@@ -179,6 +179,8 @@ def database_to_csv():
     db, c = get_db()
     c.execute('SELECT nombre, horas FROM alumnos WHERE taller_id = %s;',(g.user_taller_id,))
     database_table = c.fetchall()
+    for i in database_table:
+        i['horas'] = time_to_string_float(float(i['horas']))
     df = pd.DataFrame(database_table)
     df.to_excel(r'./Todo/csv_outputs/exported_data.xlsx', index = False)
 
