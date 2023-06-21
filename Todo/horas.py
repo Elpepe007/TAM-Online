@@ -131,7 +131,7 @@ def create():
         if not nombre:
             error = 'El nombre es requerido'
         bd, c = get_db()
-        c.execute('SELECT * FROM alumno WHERE nombre = %s',(nombre,))
+        c.execute('SELECT * FROM alumnos WHERE nombre = %s',(nombre,))
         if c.fetchone is not None:
             error = 'Ya existe un alumno con ese nombre'
         if error is not None:
