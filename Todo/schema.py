@@ -32,7 +32,7 @@ instructions = [
   );
 """,
 """
-  CREATE TABLE IF NOT EXIST dias_horas (
+  CREATE TABLE IF NOT EXISTS dias_horas (
       id INT AUTO_INCREMENT PRIMARY KEY,
       alumno_id INT UNIQUE,
       lunes TIME DEFAULT '00:00:00',
