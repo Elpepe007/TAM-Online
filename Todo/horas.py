@@ -67,6 +67,15 @@ def estudiantes_index():
         i['horas'] = time_to_string_float(str(i['horas']))
     return render_template('user_estudiante/index.html', alumnos=alumnos)
 
+@bp.route('/<nombre>/view_days', methods=['GET','POST'])
+@login_required
+def view_days(nombre):
+    alumno = get_alumno(nombre)
+    db, c = get_db()
+    c.execute('SELECT * FROM dias_horas WHERE alumno_id = %s;',(alumno['id'],)) 
+    days = c.fetchone()
+    return render_template('user_estudiante/view_days.html',alumno=alumno, days=days)
+
 
 @bp.route('/profesor_register_index',methods=['GET','POST'])
 @admin_login_required
@@ -121,6 +130,10 @@ def create():
         error = None        
         if not nombre:
             error = 'El nombre es requerido'
+        bd, c = get_db()
+        c.execute('SELECT * FROM alumno WHERE nombre = %s',nombre)
+        if c.fetchone is not None:
+            error = 'Ya existe un alumno con ese nombre'
         if error is not None:
             flash(error)
         else:

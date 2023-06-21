@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+  <head>
+
+    <meta charset="UTF-8" />
+    <title>{% block title %}{% endblock %} - Admin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" type="text/css" href='{{ url_for("static",filename="/base/css/reset.min.css") }}' />
+    <link rel="stylesheet" type="text/css" href='{{ url_for("static",filename="/base/css/style.css") }}' />
+    <link rel="stylesheet" type="text/css" href='{{ url_for("static",filename="/base/css/header.css") }}' />
+  </head>
+    <body>
+        <!-- Header Start -->
+        <header class="site-header">
+            <div class="wrapper site-header__wrapper">
+                <div class="site-header__start">
+                {% if g.user %}
+                    <a class="brand"> {{ g.user['username']}}</a> 
+                {% endif %}
+                </div>
+                <div class="site-header__middle">
+
+                </div>
+                <div class="site-header__end">
+                {% if g.user %}
+                    <a href="{{ url_for('auth.logout') }}">Cerrar sesion</a>    
+                {% endif %}          
+                </div>
+            </div>
+        </header>
+        <!-- Header End -->
+        <div class="site-header__start">
+            <br>
+            <br>
+            <a class="brand"> {{ alumno['nombre'] }}  </a>
+        </div>
+    
+        <div class="table-wrapper">
+            <table class="fl-table">
+                <thead>
+                <tr>
+                    <th>Lunes</th>
+                    <th>Martes</th>
+                    <th>Miercoles</th>
+                    <th>Jueves</th>
+                    <th>Viernes</th>
+                    <th>Domingo</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>{{ days['lunes'] }}</td>
+                    <td>{{ days['martes'] }}</td>
+                    <td>{{ days['miercoles'] }}</td>
+                    <td>{{ days['jueves'] }}</td>
+                    <td>{{ days['viernes'] }}</td>
+                    <td>{{ days['domingo'] }}</td>
+                </tr>
+                <tbody>
+            </table>
+        </div>
