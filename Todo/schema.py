@@ -30,5 +30,18 @@ instructions = [
       horas TIME,
       FOREIGN KEY (taller_id) REFERENCES talleres(id)
   );
+""",
+"""
+  CREATE TABLE IF NOT EXIST dias_horas (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      alumno_id INT UNIQUE,
+      lunes TIME DEFAULT '00:00:00',
+      martes TIME DEFAULT '00:00:00',
+      miercoles TIME DEFAULT '00:00:00',
+      jueves TIME DEFAULT '00:00:00',
+      viernes TIME DEFAULT '00:00:00',
+      domingo TIME DEFAULT '00:00:00',
+      FOREIGN KEY (alumno_id) REFERENCES alumnos(id)
+  );
 """
 ]

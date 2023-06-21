@@ -1,14 +1,33 @@
-from flask import Blueprint, flash, g, redirect, render_template, request, url_for
+from flask import Blueprint, flash, g, redirect, render_template, request, url_for, abort, Response
 from werkzeug.exceptions import abort
 from Todo.auth import login_required, admin_login_required, profesor_login_required
 from Todo.db import get_db
 from flask import send_file
 import pandas as pd
 import os
-from datetime import time
+from datetime import time, datetime
 
 bp = Blueprint('horas', __name__)
 #all_defs
+def int_to_datename(i):
+    if i == 1:
+        return 'lunes'
+    if i == 2:
+        return 'martes'
+    if i == 3:
+        return 'miercoles'
+    if i == 4:
+        return 'jueves'
+    if i == 5:
+        return 'viernes'
+    if i == 6:
+        abort(Response('No se pueden agregar horas el sabado, Lucas 13:10-17'))
+    if i == 7:
+        return 'domingo'
+    else:
+        return
+
+
 def float_to_time(n):
     h, m = divmod(n * 60, 60)
     return time(int(h),int(m))
@@ -117,6 +136,10 @@ def create():
 def update(nombre):
     alumno = get_alumno(nombre)
     error = None
+    day = int_to_datename(datetime.now().isoweekday())
+    db, c = get_db()
+    c.execute('SELECT * FROM dias_horas WHERE alumno_id = %s;',(alumno['id'],)) 
+    days = c.fetchone()
     if request.method == 'POST':
         horas = int(request.form['horas'])
         minutos = int(request.form['minutos'])
@@ -140,20 +163,24 @@ def update(nombre):
                 numero_de_horas = "{:02d}:{:02d}:00".format(horas, minutos)
                 db, c = get_db()
                 c.execute('UPDATE alumnos SET horas = SUBTIME(horas, %s) WHERE nombre = %s AND taller_id = %s',(numero_de_horas,nombre,g.user_taller_id))
+                c.execute('INSERT INTO dias_horas (alumno_id, {0}) VALUES ({1}, {2}) ON DUPLICATE KEY UPDATE {0} = SUBTIME({0}, {2});'.format(day,alumno['id'],'"'+ numero_de_horas +'"'))
                 db.commit()
             else:
                 numero_de_horas = "{:02d}:{:02d}:00".format(horas, minutos)
                 db, c = get_db()
                 c.execute('UPDATE alumnos SET horas = ADDTIME(horas, %s) WHERE nombre = %s AND taller_id = %s',(numero_de_horas,nombre,g.user_taller_id))
+                c.execute('INSERT INTO dias_horas (alumno_id, {0}) VALUES ({1}, {2}) ON DUPLICATE KEY UPDATE {0} = ADDTIME({0}, {2});'.format(day,alumno['id'],'"'+ numero_de_horas +'"'))
                 db.commit()    
 
             return redirect(url_for('horas.index'))
-    return render_template('horas/update.html', alumno=alumno, error=error)
+    return render_template('horas/update.html', alumno=alumno, error=error, days=days)
 
 @bp.route('/<nombre>,<int:number>/update_by_button', methods=['GET','POST'])
 @profesor_login_required
-def update_by_button(nombre,number):    
+def update_by_button(nombre,number): 
+    alumno = get_alumno(nombre)
     error = None
+    day = int_to_datename(datetime.now().isoweekday())
     try:
         float(number)
     except:
@@ -162,15 +189,19 @@ def update_by_button(nombre,number):
         flash(error)
     else:
         horas_request = float_to_time(float(number))
+        numero_de_horas = "{:02d}:{:02d}:00".format(number, 0)
         db, c = get_db()
         c.execute('UPDATE alumnos SET horas = ADDTIME(horas, %s) WHERE nombre = %s AND taller_id = %s',(horas_request,nombre,g.user_taller_id))
+        c.execute('INSERT INTO dias_horas (alumno_id, {0}) VALUES ({1}, {2}) ON DUPLICATE KEY UPDATE {0} = ADDTIME({0}, {2});'.format(day,alumno['id'],'"'+ numero_de_horas +'"'))
         db.commit()
         return redirect(url_for('horas.index'))
 
 @bp.route('/<string:nombre>/delete', methods=['POST'])
 @profesor_login_required
 def delete(nombre):
+    alumno = get_alumno(nombre)
     db, c = get_db()
+    c.execute('delete from dias_horas where alumno_id = %s',(alumno['id'],))
     c.execute('delete from alumnos where nombre = %s and taller_id = %s',(nombre, g.user_taller_id))
     db.commit()
     return redirect(url_for('horas.index'))
@@ -200,10 +231,14 @@ def csv_export():
 @profesor_login_required
 def reiniciar_semana():
     db, c = get_db()
-    c.execute('SELECT nombre FROM alumnos WHERE taller_id = %s;',(g.user_taller_id,))
+    c.execute('SELECT * FROM alumnos WHERE taller_id = %s;',(g.user_taller_id,))
     alumnos = c.fetchall()
+    dias = ['lunes','martes','miercoles','jueves','viernes','domingo']
     for i in alumnos:
         nombre = i['nombre']
+        alumno_id = i['id']
         c.execute('UPDATE alumnos SET horas = "00:00:00" WHERE nombre = %s AND taller_id = %s',(nombre,g.user_taller_id))
+        for d in dias:
+            c.execute('UPDATE dias_horas SET {0} = "00:00:00" WHERE alumno_id = {1}'.format(d,alumno_id))
     db.commit()
     return redirect(url_for('horas.index'))

@@ -2,7 +2,6 @@
 
 {% block content %}
 <div class="update">
-    
     {% if error %}
     <div class="flash"> {{ error }} </div>
     {% endif %}
@@ -21,5 +20,30 @@
              
     </form>
 
+</div>
+
+<div class="table-wrapper">
+    <table class="fl-table">
+        <thead>
+        <tr>
+            <th>Lunes</th>
+            <th>Martes</th>
+            <th>Miercoles</th>
+            <th>Jueves</th>
+            <th>Viernes</th>
+            <th>Domingo</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>{{ days['lunes'] }}</td>
+            <td>{{ days['martes'] }}</td>
+            <td>{{ days['miercoles'] }}</td>
+            <td>{{ days['jueves'] }}</td>
+            <td>{{ days['viernes'] }}</td>
+            <td>{{ days['domingo'] }}</td>
+        </tr>
+        <tbody>
+    </table>
 </div>
 {% endblock  %}
